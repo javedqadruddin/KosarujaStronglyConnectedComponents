@@ -15,6 +15,7 @@ def DFS_loop(graph):
     t = 0
     global s
     s = None
+    nodeStack = []
     #iterate through the graph in reverse order
     for nodeIndex in graph.keys()[::-1]:
         #print("node index " + str(nodeIndex) + " which is " + str(graph[nodeIndex]['nodeNum']))
@@ -22,7 +23,34 @@ def DFS_loop(graph):
         if not node['explored']:
             s = node
             #print("searching " + str(node['nodeNum']))
-            DFS(graph, node)
+            #DFS(graph, node)
+            #=========uncomment the line above and get rid of all lines below to put everything back to before fuking with this
+            nodeStack.append(node)
+            #print(nodeStack[-1])
+
+            nodeStack[-1]['explored'] = True
+            #print(nodeStack[-1])
+
+            while nodeStack:
+                #print(nodeStack[-1])
+                #print(type(nodeStack[-1]))
+                nodeStack[-1]['explored'] = True
+                nodeStack[-1]['leader'] = s['nodeNum']
+                unexploredNeighbor = getUnexploredNeighbor(graph, nodeStack[-1])
+                if unexploredNeighbor:
+                    nodeStack.append(unexploredNeighbor)
+                else:
+                    global t
+                    t+=1
+                    nodeStack[-1]['finishTime'] = t
+                    nodeStack.pop()
+
+
+def getUnexploredNeighbor(graph, node):
+    for neighbor in node['neighbors']:
+        if not graph[neighbor]['explored']:
+            return graph[neighbor]
+    return False
 
 
 def DFS(graph, startNode):
@@ -135,14 +163,14 @@ def getEdges(f):
 
 
 #test on each of the test case files
-#for i in range(0,NUM_TEST_FILES):
-with open('scc.txt') as f:
+for i in range(0,NUM_TEST_FILES):
+#with open('scc.txt') as f:
     #get the edges from the file
-    #filename = 'test' + str(i) + '.txt'
-    #f = open(filename)
+    filename = 'test' + str(i) + '.txt'
+    f = open(filename)
     #print("file is " + filename)
     edges = getEdges(f)
-    #f.close()
+    f.close()
 
     t = 0
     s = None
